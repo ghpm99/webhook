@@ -12,13 +12,12 @@ import (
 )
 
 var (
-	AccessesDatabaseConnectionString = ""
-	PartnersDatabaseConnectionString = ""
-	Port                             = 0
-	DateLayout                       = "2006-01-02"
-	AbsolutePath                     = ""
-	UAParserRegexesPath              = ""
-	SentryDSN                        = ""
+	Port                = 0
+	DateLayout          = "2006-01-02"
+	AbsolutePath        = ""
+	UAParserRegexesPath = ""
+	SentryDSN           = ""
+	DiscordUrl          = ""
 )
 
 func Load() {
@@ -42,4 +41,7 @@ func Load() {
 	if err != nil {
 		Port = 8000
 	}
+
+	DiscordUrl = os.Getenv("DISCORD_URL")
+
 }

@@ -6,12 +6,14 @@ import (
 	"net/http"
 
 	"webhook/src/config"
+	controllers "webhook/src/controllers"
 
 	"github.com/gorilla/mux"
 )
 
 func setupRoutes(r *mux.Router) *mux.Router {
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "Ok") })
+	r.HandleFunc("/custom", controllers.CustomWebhook)
 
 	return r
 }
