@@ -20,7 +20,6 @@ type Payload struct {
 	Data      struct {
 		CreatedAt   time.Time `json:"created_at"`
 		Id          string    `json:"id"`
-		GitUrl      string    `json:"git_url"`
 		Maintenance bool      `json:"maintenance"`
 		Name        string    `json:"name"`
 		WebUrl      string    `json:"web_url"`
@@ -28,6 +27,10 @@ type Payload struct {
 			Id   string `json:"id"`
 			Name string `json:"name"`
 		} `json:"app"`
+		Release struct {
+			Id      string `json:"id"`
+			Version int    `json:"version"`
+		} `json:"release"`
 	} `json:"data"`
 }
 
@@ -42,7 +45,11 @@ func HerokuWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content := fmt.Sprintf("Heroku:\nAção: %s Autor: %s Criado em: %s\nId: %s Url repositorio: %s App Nome: %s\nEm manutenção: %t App Url: %s", action.Action, action.Actor.Email, action.Data.CreatedAt, action.Data.Id, action.Data.GitUrl, action.Data.App.Name, action.Data.Maintenance, action.Data.WebUrl)
+	content := fmt.Sprintf(
+		"Heroku:\nAção: %s Autor: %s Criado em: %s\nId: %s App Nome: %s\nEm manutenção: %t App Url: %s\nRelease: %d",
+		action.Action, action.Actor.Email, action.Data.CreatedAt, action.Data.Id, action.Data.App.Name, action.Data.Maintenance,
+		action.Data.WebUrl, action.Data.Release.Version,
+	)
 
 	postBody, _ := json.Marshal(map[string]string{
 		"content": content,
