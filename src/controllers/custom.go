@@ -1,22 +1,19 @@
 package controllers
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
 	config "webhook/src/config"
 )
 
+type PayloadCustom struct {
+	Content string `json:"content"`
+}
+
 func CustomWebhook(w http.ResponseWriter, r *http.Request) {
 
-	postBody, _ := json.Marshal(map[string]string{
-		"content": "Teste",
-	})
-
-	requestBody := bytes.NewBuffer(postBody)
-	resp, _ := http.Post(config.DiscordUrl, "application/json", requestBody)
+	resp, _ := http.Post(config.DiscordUrl, "application/json", r.Body)
 
 	fmt.Fprintf(w, resp.Status)
 }

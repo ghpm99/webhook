@@ -9,7 +9,7 @@ import (
 	"webhook/src/config"
 )
 
-type Payload struct {
+type PayloadHeroku struct {
 	Action string `json:"action"`
 	Actor  struct {
 		Email string `json:"email"`
@@ -36,9 +36,9 @@ type Payload struct {
 
 func HerokuWebhook(w http.ResponseWriter, r *http.Request) {
 
-	var action Payload
+	var payload PayloadHeroku
 
-	err := json.NewDecoder(r.Body).Decode(&action)
+	err := json.NewDecoder(r.Body).Decode(&payload)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -47,8 +47,8 @@ func HerokuWebhook(w http.ResponseWriter, r *http.Request) {
 
 	content := fmt.Sprintf(
 		"Heroku:\nAção: %s Autor: %s Criado em: %s\nId: %s App Nome: %s\nEm manutenção: %t App Url: %s\nRelease: %d",
-		action.Action, action.Actor.Email, action.Data.CreatedAt, action.Data.Id, action.Data.App.Name, action.Data.Maintenance,
-		action.Data.WebUrl, action.Data.Release.Version,
+		payload.Action, payload.Actor.Email, payload.Data.CreatedAt, payload.Data.Id, payload.Data.App.Name, payload.Data.Maintenance,
+		payload.Data.WebUrl, payload.Data.Release.Version,
 	)
 
 	postBody, _ := json.Marshal(map[string]string{
