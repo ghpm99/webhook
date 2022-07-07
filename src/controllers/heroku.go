@@ -24,6 +24,10 @@ type Payload struct {
 		Maintenance bool      `json:"maintenance"`
 		Name        string    `json:"name"`
 		WebUrl      string    `json:"web_url"`
+		App         struct {
+			Id   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"app"`
 	} `json:"data"`
 }
 
@@ -38,7 +42,7 @@ func HerokuWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content := fmt.Sprintf("Heroku:\nAção: %s Autor: %s Criado em: %s\nId: %s Url repositorio: %s App Nome: %s\nEm manutenção: %t App Url: %s", action.Action, action.Actor.Email, action.Data.CreatedAt, action.Data.Id, action.Data.GitUrl, action.Data.Name, action.Data.Maintenance, action.Data.WebUrl)
+	content := fmt.Sprintf("Heroku:\nAção: %s Autor: %s Criado em: %s\nId: %s Url repositorio: %s App Nome: %s\nEm manutenção: %t App Url: %s", action.Action, action.Actor.Email, action.Data.CreatedAt, action.Data.Id, action.Data.GitUrl, action.Data.App.Name, action.Data.Maintenance, action.Data.WebUrl)
 
 	postBody, _ := json.Marshal(map[string]string{
 		"content": content,
