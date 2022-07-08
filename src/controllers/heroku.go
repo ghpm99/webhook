@@ -46,7 +46,7 @@ func HerokuWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	content := fmt.Sprintf(
-		"```md\nHeroku:=======\n[Ação:](%s) [Autor:](%s) [Criado em:](%s)\n[Id:](%s) [App Nome:](%s)\n[Em manutenção:](%t) [App Url:](%s)\n[Release:](%d)```",
+		"```md\nHeroku:\n=======\n[Ação:](%s) [Autor:](%s) [Criado em:](%s)\n[Id:](%s) [App Nome:](%s)\n[Em manutenção:](%t) [App Url:](%s)\n[Release:](%d)```",
 		payload.Action, payload.Actor.Email, payload.Data.CreatedAt, payload.Data.Id, payload.Data.App.Name, payload.Data.Maintenance,
 		payload.Data.WebUrl, payload.Data.Release.Version,
 	)
