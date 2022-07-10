@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 	"webhook/src/config"
 )
 
@@ -12,7 +13,7 @@ type PayloadVercel struct {
 	Job struct {
 		Id        string `json:"id"`
 		State     string `json:"state"`
-		CreatedAt string `json:"createdAt"`
+		CreatedAt int64  `json:"createdAt"`
 	} `json:"job"`
 }
 
@@ -29,7 +30,7 @@ func VercelWebhook(w http.ResponseWriter, r *http.Request) {
 
 	content := fmt.Sprintf(
 		"```md\nVercel:\n=======\n[ID:](%s) [Status:](%s)\n[Criado em:](%s)```",
-		payload.Job.Id, payload.Job.State, payload.Job.CreatedAt,
+		payload.Job.Id, payload.Job.State, time.UnixMilli(payload.Job.CreatedAt).Local().Format(time.RFC822),
 	)
 
 	postBody, _ := json.Marshal(map[string]string{
