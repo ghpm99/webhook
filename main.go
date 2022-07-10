@@ -15,6 +15,7 @@ func setupRoutes(r *mux.Router) *mux.Router {
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintf(w, "Ok") })
 	r.HandleFunc("/custom", controllers.CustomWebhook)
 	r.HandleFunc("/heroku", controllers.HerokuWebhook)
+	r.HandleFunc("/vercel", controllers.VercelWebhook)
 
 	return r
 }
