@@ -1,10 +1,11 @@
 package controllers
 
 import (
+	"bytes"
 	"fmt"
+	"encoding/json"
 	"net/http"
-
-	config "webhook/src/config"
+	"webhook/src/config"
 )
 
 type PayloadCustom struct {
@@ -13,7 +14,26 @@ type PayloadCustom struct {
 
 func CustomWebhook(w http.ResponseWriter, r *http.Request) {
 
-	resp, _ := http.Post(config.DiscordUrl, "application/json", r.Body)
+	var payload PayloadCustom
+
+	err := json.NewDecoder(r.Body).Decode(&payload)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	content := fmt.Sprintf(
+		"```md\nCustom:\n=======\n[Content:](%s)```",
+		payload.Content,
+	)
+
+	postBody, _ := json.Marshal(map[string]string{
+		"content": content,
+	})
+
+	requestBody := bytes.NewBuffer(postBody)
+	resp, _ := http.Post(config.DiscordUrl, "application/json", requestBody)
 
 	fmt.Fprintf(w, resp.Status)
 }
