@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"bytes"
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 	"webhook/src/config"
@@ -28,12 +28,12 @@ func (mt *myTime) UnmarshalJSON(bs []byte) error {
 }
 
 type PayloadFinancial struct {
-	Id string `json:"id"`
-	Type string `json:"type"`
-	Name string `json:"name"`
-	PaymentDate *myTime `json:"payment_date"`
-	Value float32 `json:"value"`
-	Payment string `json:"payment"`
+	Id          string    `json:"id"`
+	Type        string    `json:"type"`
+	Name        string    `json:"name"`
+	PaymentDate time.Time `json:"payment_date"`
+	Value       float32   `json:"value"`
+	Payment     string    `json:"payment"`
 }
 
 func FinancialWebhook(w http.ResponseWriter, r *http.Request) {
@@ -48,8 +48,8 @@ func FinancialWebhook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	content := fmt.Sprintf(
-		"```md\nFinanceiro:\n=======\n[Id:](%s) [Tipo:](%s)\n[Name:](%s)\n[Data de Pagamento:](%t) [Valor:](%f)\n[Pagamento Link:](%s)```",
-		payload.Id, payload.Type, payload.Name, payload.PaymentDate, payload.Value, payload.Payment,
+		"```md\nFinanceiro:\n=======\n[Id:](%s) [Tipo:](%s)\n[Name:](%s)\n[Data de Pagamento:](%s) [Valor:](%s)\n```[Pagamento Link](%s)",
+		payload.Id, payload.Type, payload.Name, payload.PaymentDate.Format("02/01/2006"), fmt.Sprintf("R$%.2f", payload.Value), payload.Payment,
 	)
 
 	postBody, _ := json.Marshal(map[string]string{
