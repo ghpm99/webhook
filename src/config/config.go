@@ -29,7 +29,7 @@ func Load() {
 
 	Port, err = strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
-		Port = 8000
+		Port = 8100
 	}
 
 	DiscordUrl = os.Getenv("DISCORD_URL")
