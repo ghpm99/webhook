@@ -5,35 +5,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 	"webhook/src/config"
 )
 
-type myTime time.Time
-
-var _ json.Unmarshaler = &myTime{}
-
-func (mt *myTime) UnmarshalJSON(bs []byte) error {
-	var s string
-	err := json.Unmarshal(bs, &s)
-	if err != nil {
-		return err
-	}
-	t, err := time.ParseInLocation("2006-01-02", s, time.UTC)
-	if err != nil {
-		return err
-	}
-	*mt = myTime(t)
-	return nil
+type PayloadFinancial struct {
+	Data []PaymentPayload `json:"data"`
 }
 
-type PayloadFinancial struct {
-	Id          string    `json:"id"`
-	Type        string    `json:"type"`
-	Name        string    `json:"name"`
-	PaymentDate time.Time `json:"payment_date"`
-	Value       float32   `json:"value"`
-	Payment     string    `json:"payment"`
+type PaymentPayload struct {
+	Id          int     `json:"id"`
+	Type        string  `json:"type"`
+	Name        string  `json:"name"`
+	PaymentDate string  `json:"payment_date"`
+	Value       float32 `json:"value"`
+	Payment     string  `json:"payment"`
 }
 
 func FinancialWebhook(w http.ResponseWriter, r *http.Request) {
@@ -47,10 +32,27 @@ func FinancialWebhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	content := fmt.Sprintf(
-		"```md\nFinanceiro:\n=======\n[Id:](%s) [Tipo:](%s)\n[Name:](%s)\n[Data de Pagamento:](%s) [Valor:](%s)\n```[Pagamento Link](%s)",
-		payload.Id, payload.Type, payload.Name, payload.PaymentDate.Format("02/01/2006"), fmt.Sprintf("R$%.2f", payload.Value), payload.Payment,
-	)
+	content := ""
+
+	for _, payment := range payload.Data {
+		paymentEmbed := fmt.Sprintf(
+			"```md\nFinanceiro:\n=======\n[Id:](%v) [Tipo:](%s)\n[Name:](%s)\n[Data de Pagamento:](%s) [Valor:](%s)\n```[Pagamento Link](%s)",
+			payment.Id, payment.Type, payment.Name, payment.PaymentDate, fmt.Sprintf("R$%.2f", payment.Value), payment.Payment,
+		)
+
+		lengthContent := len(content)
+		lengthPayment := len(paymentEmbed)
+
+		if lengthContent >= 2000 || lengthContent+lengthPayment >= 2000 {
+			postBody, _ := json.Marshal(map[string]string{
+				"content": content,
+			})
+			requestBody := bytes.NewBuffer(postBody)
+			http.Post(config.DiscordUrl, "application/json", requestBody)
+			content = ""
+		}
+		content += paymentEmbed
+	}
 
 	postBody, _ := json.Marshal(map[string]string{
 		"content": content,
