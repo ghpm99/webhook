@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 	"webhook/src/config"
+	"webhook/src/util"
 )
 
 type PayloadHeroku struct {
@@ -42,6 +43,7 @@ func HerokuWebhook(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		util.CaptureException(err, nil)
 		return
 	}
 

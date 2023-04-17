@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 	"webhook/src/config"
+	"webhook/src/util"
 )
 
 type PayloadVercel struct {
@@ -25,6 +26,7 @@ func VercelWebhook(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		util.CaptureException(err, nil)
 		return
 	}
 

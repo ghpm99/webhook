@@ -32,6 +32,8 @@ func Load() {
 		Port = 8100
 	}
 
+	SentryDSN = os.Getenv("SENTRY_DSN")
+
 	DiscordUrl = os.Getenv("DISCORD_URL")
 
 }

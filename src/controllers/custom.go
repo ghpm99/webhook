@@ -2,10 +2,11 @@ package controllers
 
 import (
 	"bytes"
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"webhook/src/config"
+	"webhook/src/util"
 )
 
 type PayloadCustom struct {
@@ -20,6 +21,7 @@ func CustomWebhook(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		util.CaptureException(err, nil)
 		return
 	}
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"webhook/src/config"
+	"webhook/src/util"
 )
 
 type PayloadFinancial struct {
@@ -29,6 +30,7 @@ func FinancialWebhook(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		util.CaptureException(err, nil)
 		return
 	}
 
